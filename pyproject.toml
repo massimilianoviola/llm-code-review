@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-code-review"
+version = "0.1.0"
+description = "Git pre-commit hook that reviews staged code changes using a local LLM via Ollama"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "click>=8.0",
+    "httpx>=0.24",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-mock>=3.0",
+    "ruff>=0.1",
+]
+
+[project.scripts]
+llm-code-review = "llm_code_review.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llm_code_review"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "double"

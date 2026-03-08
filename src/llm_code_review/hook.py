@@ -8,13 +8,13 @@ HOOK_MARKER = "# Installed by llm-code-review"
 HOOK_SCRIPT = f"""\
 #!/usr/bin/env bash
 {HOOK_MARKER}
-# Try to reconnect stdin to terminal for interactive prompt;
-# fall back to non-interactive if no TTY (e.g. VS Code, GUI clients)
-if [ -e /dev/tty ]; then
+# Only run if there's a terminal (skip in VS Code sidebar, etc.)
+if [ -r /dev/tty ] && exec 3< /dev/tty 2>/dev/null; then
     exec < /dev/tty
     exec llm-code-review run
-else
-    exec llm-code-review run --no-interactive
+# Uncomment to also run in non-interactive environments:
+# else
+#     exec llm-code-review run --no-interactive
 fi
 """
 

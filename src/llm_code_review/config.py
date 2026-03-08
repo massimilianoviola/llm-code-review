@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import tomllib
 from dataclasses import dataclass
 from pathlib import Path
@@ -49,13 +48,6 @@ def load_config(
             config.strict = bool(data["strict"])
         if "timeout" in data:
             config.timeout = int(data["timeout"])
-
-    if env_model := os.environ.get("LLM_REVIEW_MODEL"):
-        config.model = env_model
-    if env_url := os.environ.get("LLM_REVIEW_URL"):
-        config.ollama_url = env_url
-    if os.environ.get("LLM_REVIEW_STRICT", "").lower() in ("1", "true", "yes"):
-        config.strict = True
 
     if model is not None:
         config.model = model

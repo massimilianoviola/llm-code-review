@@ -111,9 +111,7 @@ strict = false
 timeout = 120
 ```
 
-**Precedence** (each layer overrides the previous): defaults → `.llm-code-review.toml` → env vars → CLI flags
-
-**Env vars:** `LLM_REVIEW_MODEL` · `LLM_REVIEW_URL` · `LLM_REVIEW_STRICT`
+**Precedence** (each layer overrides the previous): defaults → `.llm-code-review.toml` → CLI flags
 
 
 ## 🧑‍💻 Development

@@ -57,8 +57,12 @@ SUMMARY: README.md content updated successfully; no code or security issues foun
 
   Verdict: PASS
 
-  Proceed with commit? [y/N] 
+  Proceed with commit? [y/N]
 ```
+
+### VS Code sidebar
+
+The hook also runs (in non-interactive mode) when committing from the VS Code Source Control sidebar (takes its time). The review output is saved to `.llm-code-review.log`. On FAIL, the commit is blocked. Run `git commit` from the terminal to review interactively and accept anyway.
 
 ## 🛠️ Commands
 
@@ -111,9 +115,7 @@ strict = false
 timeout = 120
 ```
 
-**Precedence** (each layer overrides the previous): defaults → `.llm-code-review.toml` → env vars → CLI flags
-
-**Env vars:** `LLM_REVIEW_MODEL` · `LLM_REVIEW_URL` · `LLM_REVIEW_STRICT`
+**Precedence** (each layer overrides the previous): defaults → `.llm-code-review.toml` → CLI flags
 
 
 ## 🧑‍💻 Development

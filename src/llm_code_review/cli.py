@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
 import click
 
@@ -57,10 +58,24 @@ def run(model, url, strict, no_interactive):
 
     # Decide whether to proceed
     if config.no_interactive or not sys.stdin.isatty():
-        # Automatic decision based on verdict
-        if result.verdict == "FAIL":
-            sys.exit(1)
-        if result.verdict == "WARN" and config.strict:
+        # Write review to log file
+        log_file = Path(".llm-code-review.log")
+        log_lines = [f"VERDICT: {result.verdict}"]
+        if result.issues:
+            log_lines.append("ISSUES:")
+            for issue in result.issues:
+                log_lines.append(f"  - {issue}")
+        if result.summary:
+            log_lines.append(f"SUMMARY: {result.summary}")
+        failed = result.verdict == "FAIL" or (result.verdict == "WARN" and config.strict)
+        if failed:
+            log_lines.append("")
+            log_lines.append(
+                "Commit blocked. Run `git commit` from the terminal to review interactively."
+            )
+        log_file.write_text("\n".join(log_lines) + "\n")
+
+        if failed:
             sys.exit(1)
         sys.exit(0)
     else:

@@ -1,22 +1,29 @@
 from __future__ import annotations
 
+import shutil
 import stat
 from pathlib import Path
 
 HOOK_MARKER = "# Installed by llm-code-review"
 
-HOOK_SCRIPT = f"""\
+HOOK_TEMPLATE = """\
 #!/usr/bin/env bash
-{HOOK_MARKER}
-# Only run if there's a terminal (skip in VS Code sidebar, etc.)
-if [ -r /dev/tty ] && exec 3< /dev/tty 2>/dev/null; then
+{marker}
+# Terminal: interactive mode. No terminal (VS Code sidebar, etc.): non-interactive + log.
+if [ -e /dev/tty ] && sh -c 'exec 0</dev/tty' 2>/dev/null; then
     exec < /dev/tty
-    exec llm-code-review run
-# Uncomment to also run in non-interactive environments:
-# else
-#     exec llm-code-review run --no-interactive
+    {cmd} run
+else
+    {cmd} run --no-interactive
 fi
 """
+
+
+def _build_hook_script() -> str:
+    cmd = shutil.which("llm-code-review")
+    if cmd is None:
+        raise FileNotFoundError("llm-code-review is not on PATH. Is the package installed?")
+    return HOOK_TEMPLATE.format(marker=HOOK_MARKER, cmd=cmd)
 
 
 def _get_hooks_dir(repo_path: str | None = None) -> Path:
@@ -45,7 +52,7 @@ def install_hook(repo_path: str | None = None) -> str:
     else:
         msg = ""
 
-    hook_file.write_text(HOOK_SCRIPT)
+    hook_file.write_text(_build_hook_script())
     # Make executable
     hook_file.chmod(hook_file.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH)
 

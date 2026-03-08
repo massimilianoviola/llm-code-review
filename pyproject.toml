@@ -30,5 +30,8 @@ packages = ["src/llm_code_review"]
 [tool.ruff]
 line-length = 100
 
+[tool.ruff.lint]
+select = ["I"]
+
 [tool.ruff.format]
 quote-style = "double"
